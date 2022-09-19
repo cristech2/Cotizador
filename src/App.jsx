@@ -1,11 +1,13 @@
-
+import NavBar from "./components/NavBar";
+import LoginRegister from "./routes/LoginRegister";
 
 function App() {
-  
-
   return (
-    <h1>hola</h1>
-  )
+    <>
+      <NavBar />
+      <LoginRegister />
+    </>
+  );
 }
 
-export default App
+export default App;
