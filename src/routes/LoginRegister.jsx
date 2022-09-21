@@ -1,5 +1,10 @@
+import { useForm } from "react-hook-form";
+
+
 const LoginRegister = () => {
   const pathname = window.location.pathname;
+const {register} = useForm()
+
   return (
     <div className="login-page">
       <div className="container">
@@ -28,7 +33,6 @@ const LoginRegister = () => {
                           />
                         </div>
                       </div>
-
                       <div className="col-12">
                         <label>
                           Password<span className="text-danger">*</span>
@@ -42,14 +46,13 @@ const LoginRegister = () => {
                             className="form-control"
                             placeholder="Ingresar contraseña"
                           />
+                          <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Repetir contraseña"
+                          />
                         </div>
                       </div>
-                      <div className="col-sm-10">
-                        <a href="#" className="float-end text-primary">
-                          Olvidaste la contraseña?
-                        </a>
-                      </div>
-
                       <div className="col-12">
                         <button
                           type="submit"
