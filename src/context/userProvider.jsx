@@ -4,16 +4,16 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export const UserContext = createContext();
 
-const UserProvider = (props) => {
+const UserProvider = ({ children }) => {
   const [user, setUser] = useState(false);
 
-  const createUser = (user, password) => {
-    createUserWithEmailAndPassword(auth, user, password);
+  const registerUser = (email, password) => {
+    createUserWithEmailAndPassword(auth, email, password);
   };
 
   return (
-    <UserContext.Provider value={(user, setUser,createUser)}>
-      {props.children}
+    <UserContext.Provider value={{user, setUser, registerUser}}>
+      {children}
     </UserContext.Provider>
   );
 };

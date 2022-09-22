@@ -1,9 +1,36 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-
+import { UserContext } from "../context/userProvider";
 
 const LoginRegister = () => {
-  const pathname = window.location.pathname;
-const {register} = useForm()
+  const pathname = window.location.pathname.slice(1);
+  console.log(pathname);
+
+  const validatePassword = (v) => {
+    var noValido = /\s/;
+    if (noValido.test(v)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const { registerUser, user } = useContext(UserContext);
+
+  const sendUser = async({ email, password }) => {
+    console.log(user);
+    try {
+      await registerUser(email, password);
+    } catch (error) {
+      console.log(error.code);
+    }
+    
+  };
 
   return (
     <div className="login-page">
@@ -11,13 +38,17 @@ const {register} = useForm()
         <div className="row">
           <div className="col-lg-10 offset-lg-1">
             <h3 className="mb-3">
-              {pathname == "/Login" ? "Login" : "Registro"}
+              {pathname == "Login" ? "Login" : "Registro"}
             </h3>
             <div className="bg-white shadow rounded">
               <div className="row">
                 <div className="col-md-7 pe-0">
                   <div className="form-left h-100 py-5 px-5">
-                    <form action="" className="row g-4">
+                    <form
+                      action=""
+                      className="row g-4"
+                      onSubmit={handleSubmit(sendUser)}
+                    >
                       <div className="col-12">
                         <label>
                           Username<span className="text-danger">*</span>
@@ -30,7 +61,23 @@ const {register} = useForm()
                             type="text"
                             className="form-control"
                             placeholder="Ingresar Usuario"
+                            {...register("email", {
+                              required: {
+                                value: true,
+                                message: "campo obligatorio",
+                              },
+                              pattern: {
+                                value:
+                                  /[a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,15})/,
+                                message: "ingrese un correo valido",
+                              },
+                            })}
                           />
+                          {errors.email && (
+                            <div className="col-12">
+                              <label>{errors.email.message}</label>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="col-12">
@@ -45,12 +92,33 @@ const {register} = useForm()
                             type="password"
                             className="form-control"
                             placeholder="Ingresar contraseña"
+                            {...register("password", {
+                              minLength: {
+                                value: 6,
+                                message: "Mínimo 6 carácteres",
+                              },
+                              validate: {
+                                espacios: (v) => {
+                                  if (!validatePassword(v)) {
+                                    return "no se admiten espacios en blanco";
+                                  }
+                                  return true;
+                                },
+                              },
+                            })}
                           />
-                          <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Repetir contraseña"
-                          />
+                          {errors.password && (
+                            <div className="col-12">
+                              <label>{errors.password.message}</label>
+                            </div>
+                          )}
+                          {pathname == "register" && (
+                            <input
+                              type="password"
+                              className="form-control"
+                              placeholder="Repetir contraseña"
+                            />
+                          )}
                         </div>
                       </div>
                       <div className="col-12">
@@ -58,10 +126,12 @@ const {register} = useForm()
                           type="submit"
                           className="btn btn-primary px-4 float-start mt-4"
                         >
-                          login
+                          {pathname == "Login" ? "Login" : "Registrar"}
                         </button>
                         <button className="btn btn-primary px-4 float-end mt-4">
-                          login con Google
+                          {pathname == "Login"
+                            ? "Login con Google"
+                            : "Registrar con Google"}
                         </button>
                       </div>
                     </form>
