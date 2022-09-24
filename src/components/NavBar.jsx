@@ -5,7 +5,6 @@ import { UserContext } from "../context/userProvider";
 
 const NavBar = () => {
   const { user } = useContext(UserContext);
-  console.log(user);
 
   return (
     <nav className="navbar navbar-expand-lg bg-light">

@@ -1,11 +1,12 @@
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/userProvider";
+import { errorsFirebase } from "../errorsFirebase";
 
 const LoginRegister = () => {
   const pathname = window.location.pathname.slice(1);
-  console.log(pathname);
-
+  const navigate = useNavigate();
   const validatePassword = (v) => {
     var noValido = /\s/;
     if (noValido.test(v)) {
@@ -18,18 +19,19 @@ const LoginRegister = () => {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
+    setError,
   } = useForm();
 
-  const { registerUser, user } = useContext(UserContext);
+  const { registerUser, setUser } = useContext(UserContext);
 
-  const sendUser = async({ email, password }) => {
-    console.log(user);
+  const sendUser = async ({ email, password }) => {
     try {
       await registerUser(email, password);
     } catch (error) {
-      console.log(error.code);
+      const { code, message } = errorsFirebase(error);
+      setError(code, { message });
     }
-    
   };
 
   return (
@@ -117,9 +119,26 @@ const LoginRegister = () => {
                               type="password"
                               className="form-control"
                               placeholder="Repetir contraseña"
+                              {...register("repeatpassword", {
+                                validate: {
+                                  equals: (v) =>
+                                    v === getValues("password") ||
+                                    "las contraseñas no coinciden",
+                                },
+                              })}
                             />
                           )}
                         </div>
+                        {errors.password && (
+                          <div className="col-12">
+                            <label>{errors.password.message}</label>
+                          </div>
+                        )}
+                        {errors.repeatpassword && (
+                          <div className="col-12">
+                            <label>{errors.repeatpassword.message}</label>
+                          </div>
+                        )}
                       </div>
                       <div className="col-12">
                         <button
@@ -127,11 +146,6 @@ const LoginRegister = () => {
                           className="btn btn-primary px-4 float-start mt-4"
                         >
                           {pathname == "Login" ? "Login" : "Registrar"}
-                        </button>
-                        <button className="btn btn-primary px-4 float-end mt-4">
-                          {pathname == "Login"
-                            ? "Login con Google"
-                            : "Registrar con Google"}
                         </button>
                       </div>
                     </form>
