@@ -25,15 +25,15 @@ const LoginRegister = () => {
 
   const { registerUser, setUser } = useContext(UserContext);
 
-  const sendUser = async ({ email, password }) => {
+  const onSubmit = async ({ email, password }) => {
     try {
-      await registerUser(email, password);
+        await registerUser(email, password);
+        navigate("/");
     } catch (error) {
-      const { code, message } = errorsFirebase(error);
-      setError(code, { message });
+        const { code, message } = errorsFirebase(error);
+        setError(code, { message });
     }
-  };
-
+};
   return (
     <div className="login-page">
       <div className="container">
@@ -49,7 +49,7 @@ const LoginRegister = () => {
                     <form
                       action=""
                       className="row g-4"
-                      onSubmit={handleSubmit(sendUser)}
+                      onSubmit={handleSubmit(onSubmit)}
                     >
                       <div className="col-12">
                         <label>
